@@ -20,7 +20,6 @@ class CFileSet
 	attr_reader :src
 	attr_reader :obj
 	attr_reader :obj_path
-	@dep_lookup
 
 
 	def initialize()
@@ -52,10 +51,10 @@ class CFileSet
 	# Get the dependencies for an object file.
 	def deps( obj_file )
 		dep_list = []
-		c_file = @obj_to_src[ obj_file ]
+		c_file = obj_to_src( obj_file )
 		headers = @dep_lookup.headers( c_file, @inc )
 		dep_list << c_file
-		dep_list << headers
+		dep_list.import( headers )
 		return dep_list
 	end
 
