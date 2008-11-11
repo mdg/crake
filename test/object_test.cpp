@@ -7,7 +7,7 @@
  */
 void test_object()
 {
-	object o( 4 );
+	object o( OBJ_TYPE_1, 4 );
 
 	if ( o.doubled() != 8 ) {
 		std::cout << "object::doubled() doesn't work.\n";
