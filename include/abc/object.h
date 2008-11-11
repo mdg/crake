@@ -9,7 +9,7 @@ class object
 public:
 	object( obj_type, int i );
 
-	obj_type type() const { return m_type; }
+	obj_type type() const;
 	int doubled() const;
 	int tripled() const;
 
