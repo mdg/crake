@@ -41,8 +41,12 @@ class CFileSet
 	def compile( glob )
 		files = FileList[ glob ]
 		@src.import( files )
-		objs = files.sub( /\.cpp$/, '.o' )
-		@obj.import( objs )
+		for f in files.each
+			# this needs to handle any extension, not just .cpp
+			obj = f.sub( /\.cpp$/, '.o' )
+			@obj << obj
+			@obj_to_src_map[ obj ] = f
+		end
 	end
 
 	# Get the dependencies for an object file.
