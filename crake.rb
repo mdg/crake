@@ -11,6 +11,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+require 'rake'
+
 
 # Files included in the C project
 class CFileSet
@@ -23,22 +25,23 @@ class CFileSet
 	@dep_lookup
 
 
-	def __initialize__()
-		@inc = []
-		@src = FileSet[]
-		@obj = FileSet[]
+	def initialize()
+		@inc = Array.new()
+		@src = FileList.new()
+		@obj = FileList.new()
 		@obj_path = nil
 		@obj_to_src = {}
 	end
 
 	# Include a path in the include directory.
 	def include( inc_path )
-		@inc.append( path )
+		@inc << inc_path
 	end
 
-	# Add a set of files that should be compiled.
+	# Add a set of files that should be compiled as described by the
+	# given glob
 	def compile( glob )
-		files = FileSet[ glob ]
+		files = FileList[ glob ]
 		@src << files
 	end
 
