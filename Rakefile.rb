@@ -17,3 +17,7 @@ rule '.o' => SRC do |t|
 	sh %{g++ -c -g -Iinclude -o #{t.name} #{t.source}}
 end
 
+task :clean => [] do
+	sh "rm -rf obj"
+end
+
