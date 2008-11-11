@@ -17,3 +17,9 @@ void test_object()
 	}
 }
 
+
+int main()
+{
+	test_object();
+}
+
