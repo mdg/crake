@@ -8,25 +8,25 @@ class TC_CFileSet < Test::Unit::TestCase
 	end
 
 	def test_construction
-		assert( [], @cfiles.inc )
-		assert( [], @cfiles.src )
-		assert( [], @cfiles.obj )
-		assert( true, @cfiles.obj_path.nil? )
+		assert_equal( [], @cfiles.inc )
+		assert_equal( [], @cfiles.src )
+		assert_equal( [], @cfiles.obj )
+		assert_equal( true, @cfiles.obj_path.nil? )
 	end
 
 	def test_include
 		@cfiles.include( "include" )
 		@cfiles.include( "testpp/include" )
 
-		assert( [ "include", "testpp/include" ], @cfiles.inc )
+		assert_equal( [ "include", "testpp/include" ], @cfiles.inc )
 	end
 
 	def test_compile
 		@cfiles.compile( "../cpp_project/lib/**/*.cpp" )
 
-		assert( [ "../cpp_project/lib/object.cpp" ], @cfiles.src )
-		assert( [ "../cpp_project/lib/object.o" ], @cfiles.obj )
-		assert( "../cpp_project/lib/object.cpp" \
+		assert_equal( [ "../cpp_project/lib/object.cpp" ], @cfiles.src )
+		assert_equal( [ "../cpp_project/lib/object.o" ], @cfiles.obj )
+		assert_equal( "../cpp_project/lib/object.cpp" \
 		       , @cfiles.obj_to_src( "../cpp_project/lib/object.o" ) )
 	end
 
