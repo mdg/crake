@@ -12,7 +12,6 @@ class TC_CFileSet < Test::Unit::TestCase
 		assert( [], @cfiles.src )
 		assert( [], @cfiles.obj )
 		assert( true, @cfiles.obj_path.nil? )
-		assert( {}, @cfiles.obj_to_src )
 	end
 
 	def test_include
@@ -26,6 +25,9 @@ class TC_CFileSet < Test::Unit::TestCase
 		@cfiles.compile( "../cpp_project/lib/**/*.cpp" )
 
 		assert( [ "../cpp_project/lib/object.cpp" ], @cfiles.src )
+		assert( [ "../cpp_project/lib/object.o" ], @cfiles.obj )
+		assert( "../cpp_project/lib/object.cpp" \
+		       , @cfiles.obj_to_src( "../cpp_project/lib/object.o" ) )
 	end
 
 end

@@ -20,8 +20,6 @@ class CFileSet
 	attr_reader :src
 	attr_reader :obj
 	attr_reader :obj_path
-	# Map the object file to the src directory
-	attr_reader :obj_to_src
 	@dep_lookup
 
 
@@ -30,7 +28,7 @@ class CFileSet
 		@src = FileList.new()
 		@obj = FileList.new()
 		@obj_path = nil
-		@obj_to_src = {}
+		@obj_to_src_map = Hash.new()
 	end
 
 	# Include a path in the include directory.
@@ -53,6 +51,10 @@ class CFileSet
 		dep_list << c_file
 		dep_list << headers
 		return dep_list
+	end
+
+	def obj_to_src( obj_file )
+		return @obj_to_src_map[ obj_file ]
 	end
 end
 
