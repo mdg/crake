@@ -40,7 +40,9 @@ class CFileSet
 	# given glob
 	def compile( glob )
 		files = FileList[ glob ]
-		@src << files
+		@src.import( files )
+		objs = files.sub( /\.cpp$/, '.o' )
+		@obj.import( objs )
 	end
 
 	# Get the dependencies for an object file.
@@ -53,6 +55,7 @@ class CFileSet
 		return dep_list
 	end
 
+	# Return the mapped source file for a given object file
 	def obj_to_src( obj_file )
 		return @obj_to_src_map[ obj_file ]
 	end
