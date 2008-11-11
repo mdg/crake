@@ -6,6 +6,8 @@ OBJ = SRC.sub( /\.cpp$/, '.o' ).sub( /^lib\//, 'obj/lib/' )
 TEST = FileList[ 'test/**/*.cpp' ]
 TEST_OBJ = TEST.sub( /\.cpp$/, '.o' ).sub( /^test\//, 'obj/test/' )
 
+print TEST_OBJ.to_s + "\n"
+
 directory 'obj/lib'
 directory 'obj/test'
 
@@ -24,7 +26,8 @@ task :compile => ["obj/lib"] + OBJ
 
 task :compile_test => ['obj/test'] + TEST_OBJ
 
-rule '.o' => SRC do |t|
+rule '.o' => TEST + SRC do |t|
+	print %{#{t.name} #{t.source}\n}
 	sh %{g++ -c -g -Iinclude -o #{t.name} #{t.source}}
 end
 
