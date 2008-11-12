@@ -99,16 +99,16 @@ class CDependency
 				end
 			end
 		end
-		return header_list
+		return header_list.uniq
 	end
 
 	# Check for an included file in the given include directories
 	def header_path( inc, inc_dirs )
-		print "inc_dirs = '", inc_dirs, "'\n"
+		# print "inc_dirs = '", inc_dirs, "'\n"
 		inc_dirs.each do |inc_dir|
 			path = Pathname.new( inc_dir )
 			path = path + inc
-			print "path = '", path, "'\n"
+			# print "path = '", path, "'\n"
 			if path.exist?
 				return path.to_s
 			end
