@@ -2,9 +2,13 @@
 require "../crake.rb"
 require "test/unit"
 
-class TC_CFileSet < Test::Unit::TestCase
+class CFileSetTestCase < Test::Unit::TestCase
 	def setup
 		@cfiles = CFileSet.new()
+	end
+
+	def teardown
+		@cfiles = nil
 	end
 
 	def test_construction
@@ -30,5 +34,29 @@ class TC_CFileSet < Test::Unit::TestCase
 		       , @cfiles.obj_to_src( "../cpp_project/lib/object.o" ) )
 	end
 
+end
+
+# Test cases for the CDependency class
+class CDependencyTestCase < Test::Unit::TestCase
+	def setup
+		@inc = [ '../cpp_project/include' ]
+		@dep = CDependency.new()
+	end
+
+	def teardown
+		@dep = nil
+	end
+
+	def test_header_path
+		inc_path = @dep.header_path( 'abc/object.h', @inc )
+		assert_equal( '../cpp_project/include/abc/object.h', inc_path )
+	end
+
+	def test_headers
+		deps = @dep.headers( '../cpp_project/lib/object.cpp', @inc )
+		assert_equal( [ '../cpp_project/include/abc/object.h' \
+				, '../cpp_project/include/abc/obj_test.h' ] \
+				, deps )
+	end
 end
 

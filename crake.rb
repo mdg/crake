@@ -12,6 +12,7 @@
 # limitations under the License.
 
 require 'rake'
+require 'pathname'
 
 
 # Files included in the C project
@@ -28,6 +29,9 @@ class CFileSet
 		@obj = FileList.new()
 		@obj_path = nil
 		@obj_to_src_map = Hash.new()
+
+		# this should probably be injected, not created here
+		@dep_lookup = CDependency.new()
 	end
 
 	# Include a path in the include directory.
@@ -70,7 +74,46 @@ class CDependency
 	# this unnecessary for now attr_reader :header_cache
 
 
-	def headers( src_file, inc_dirs )
+	# This function should probably be modified to use yield
+	# somehow.  Haven't quite got yield figured out
+	# enough for that yet though.
+	def headers( src_filename, inc_dirs )
+		header_list = []
+
+		p = Pathname.new( src_filename )
+		path_prefix = p.dirname.to_s + "/"
+		# print path_prefix, "\n"
+		src_file = File.new( src_filename, "r" )
+		src_file.each do |line|
+			# print line
+			inc = line.match( /#include +"([\w]+\.h)"/ )
+			if ( ! inc.nil? )
+				# inc_path = path_prefix + inc[1]
+				inc_path = header_path( inc[1], inc_dirs )
+				if not inc_path.nil?
+					# print inc_path, "\n"
+					header_list << inc_path
+					included_headers = headers( inc_path \
+								   , inc_dirs )
+					header_list.import( included_headers )
+				end
+			end
+		end
+		return header_list
+	end
+
+	# Check for an included file in the given include directories
+	def header_path( inc, inc_dirs )
+		print "inc_dirs = '", inc_dirs, "'\n"
+		inc_dirs.each do |inc_dir|
+			path = Pathname.new( inc_dir )
+			path = path + inc
+			print "path = '", path, "'\n"
+			if path.exist?
+				return path.to_s
+			end
+		end
+		return nil
 	end
 end
 
