@@ -103,6 +103,9 @@ class CDependency
 	end
 
 	# Check if the given line of text includes an include statement
+	# return the included header if one is found,
+	# return nil if the line does not have an include statement
+	# throw an error if it is an include line but it is not understood
 	def find_include( line )
 		inc = line.match( /#include +"([\w]+\.h)"/ )
 		# return true if the include is found
