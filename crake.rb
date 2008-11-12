@@ -102,6 +102,13 @@ class CDependency
 		return header_list.uniq
 	end
 
+	# Check if the given line of text includes an include statement
+	def find_include( line )
+		inc = line.match( /#include +"([\w]+\.h)"/ )
+		# return true if the include is found
+		return ( not inc.nil? )
+	end
+
 	# Check for an included file in the given include directories
 	def header_path( inc, inc_dirs )
 		# print "inc_dirs = '", inc_dirs, "'\n"
