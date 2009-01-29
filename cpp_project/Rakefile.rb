@@ -1,4 +1,4 @@
-require 'rake'
+require '../crake'
 
 INC = FileList[ 'include/**/*.h' ]
 SRC = FileList[ 'lib/**/*.cpp' ]
@@ -6,7 +6,6 @@ OBJ = SRC.sub( /\.cpp$/, '.o' ).sub( /^lib\//, 'obj/lib/' )
 TEST = FileList[ 'test/**/*.cpp' ]
 TEST_OBJ = TEST.sub( /\.cpp$/, '.o' ).sub( /^test\//, 'obj/test/' )
 
-print TEST_OBJ.to_s + "\n"
 
 directory 'obj/lib'
 directory 'obj/test'
@@ -32,6 +31,6 @@ rule '.o' => TEST + SRC do |t|
 end
 
 task :clean => [] do
-	sh "rm -rf obj"
+	sh "rm -rf obj *.a"
 end
 
