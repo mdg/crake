@@ -34,6 +34,10 @@ class CFileSetTestCase < Test::Unit::TestCase
 		       , @cfiles.obj_to_src( "../cpp_project/lib/object.o" ) )
 	end
 
+	def test_creation
+		f = CFileSet['dog']
+	end
+
 end
 
 # Test cases for the CDependency class
