@@ -15,6 +15,8 @@ require 'rake'
 require 'pathname'
 
 
+# module Crake
+
 # Files included in the C project
 class CFileSet
 	attr_reader :inc
@@ -24,6 +26,17 @@ class CFileSet
 
 
 	def initialize()
+		@inc = Array.new()
+		@src = FileList.new()
+		@obj = FileList.new()
+		@obj_path = nil
+		@obj_to_src_map = Hash.new()
+
+		# this should probably be injected, not created here
+		@dep_lookup = CDependency.new()
+	end
+
+	def initialize(*args)
 		@inc = Array.new()
 		@src = FileList.new()
 		@obj = FileList.new()
@@ -65,6 +78,12 @@ class CFileSet
 	# Return the mapped source file for a given object file
 	def obj_to_src( obj_file )
 		return @obj_to_src_map[ obj_file ]
+	end
+
+	class << self
+		def [](*args)
+			new(*args)
+		end
 	end
 end
 
@@ -126,4 +145,6 @@ class CDependency
 		return nil
 	end
 end
+
+# end # Module Crake
 
