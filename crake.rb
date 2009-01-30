@@ -18,7 +18,7 @@ require 'pathname'
 # module Crake
 
 # Files included in the C project
-class CFileSet
+class CFileList
 	attr_reader :inc
 	attr_reader :src
 	attr_reader :obj

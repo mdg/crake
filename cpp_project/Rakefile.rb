@@ -1,6 +1,6 @@
 require '../crake'
 
-INC = CFileSet[ 'include/**/*.h' ]
+INC = CFileList[ 'include/**/*.h' ]
 SRC = FileList[ 'lib/**/*.cpp' ]
 OBJ = SRC.sub( /\.cpp$/, '.o' ).sub( /^lib\//, 'obj/lib/' )
 TEST = FileList[ 'test/**/*.cpp' ]
