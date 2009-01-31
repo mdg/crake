@@ -1,1 +1,5 @@
-this is a rake module that handles c/c++ compilation directly
+A rake module to make C/C++ compilation easier.
+
+Supports:
+* compiling object files into different directories
+* multiple targets
