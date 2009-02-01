@@ -38,6 +38,7 @@ class CFileSet
 	# Include a path in the include directory.
 	def include( inc_path )
 		@inc << inc_path
+		@inc.flatten!
 	end
 
 	# Add a set of files that should be compiled as described by the
