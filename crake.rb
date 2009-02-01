@@ -22,6 +22,7 @@ class CFileSet
 	attr_reader :src
 	attr_reader :obj
 	attr_reader :obj_path
+	attr_accessor :obj_dir
 
 
 	def initialize()
