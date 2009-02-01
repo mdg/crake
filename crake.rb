@@ -11,7 +11,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+require 'rubygems'
 require 'pathname'
+require 'rake'
 
 
 # module Crake
@@ -27,8 +29,8 @@ class CFileSet
 
 	def initialize()
 		@inc = Array.new()
-		@src = Array.new()
-		@obj = Array.new()
+		@src = FileList.new()
+		@obj = FileList.new()
 		@obj_path = nil
 		@obj_to_src_map = Hash.new()
 
