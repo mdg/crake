@@ -1,3 +1,4 @@
+#! /usr/bin/ruby
 
 require "../crake.rb"
 require "test/unit"
@@ -39,10 +40,6 @@ class CFileSetTestCase < Test::Unit::TestCase
 		assert_equal( [ "../cpp_project/lib/object.o" ], @cfiles.obj )
 		assert_equal( "../cpp_project/lib/object.cpp" \
 		       , @cfiles.obj_to_src( "../cpp_project/lib/object.o" ) )
-	end
-
-	def test_creation
-		f = CFileSet['dog']
 	end
 
 end
