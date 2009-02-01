@@ -11,7 +11,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require 'rake'
 require 'pathname'
 
 
@@ -27,19 +26,8 @@ class CFileSet
 
 	def initialize()
 		@inc = Array.new()
-		@src = FileList.new()
-		@obj = FileList.new()
-		@obj_path = nil
-		@obj_to_src_map = Hash.new()
-
-		# this should probably be injected, not created here
-		@dep_lookup = CDependency.new()
-	end
-
-	def initialize(*args)
-		@inc = Array.new()
-		@src = FileList.new()
-		@obj = FileList.new()
+		@src = Array.new()
+		@obj = Array.new()
 		@obj_path = nil
 		@obj_to_src_map = Hash.new()
 
