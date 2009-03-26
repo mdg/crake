@@ -11,8 +11,101 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require 'rake'
+require 'rubygems'
 require 'pathname'
+require 'rake'
+
+
+class CProject
+	attr_accessor :cc
+	attr_accessor :obj_dir
+	attr_accessor :debug
+	attr_reader :obj
+	attr_reader :debug_flag
+
+
+	def initialize()
+		@cc = 'g++'
+		@inc = Array.new()
+		@src = FileList.new()
+		@obj_dir = ''
+		@debug = false
+		# @filemap = CFileMap.new()
+	end
+
+	def include( inc )
+		@inc << inc
+	end
+
+	def debug?()
+		return @debug
+	end
+
+	def debug!()
+		@debug = true
+	end
+
+	def debug=( dbg )
+		@debug = dbg
+	end
+
+	# add files to be compiled
+	def source( source )
+		@src << source
+	end
+
+	def compile_dependencies()
+		deps = []
+		@files.each do |f|
+			deps << src_to_obj( f )
+		end
+		return deps
+	end
+
+	def object_dependencies( obj )
+		src = obj_to_src( obj )
+		deps = [ src ]
+		deps << source_dependencies( src )
+		return deps
+	end
+
+	# actually compile a file
+	# maybe call it CC
+	def compile( object )
+		src = obj_to_src( object )
+		exec( "#{@cc} #{debug_flag} #{inc_flags} -o #{object}" )
+	end
+
+	# don't implement yet
+	def link( name )
+		exec( "#{@cc} -o #{name} #{objects}" )
+	end
+
+	# not implemented yet
+	def archive( name )
+		exec( "ar lib#{name}.a" )
+	end
+
+	def debug_flag()
+		if not @debug
+			return ''
+		end
+		return '-g'
+	end
+
+	def src_to_obj( source )
+		return source
+	end
+
+	def obj_to_src( object )
+		return object
+	end
+
+	def exec( cmd )
+		sh cmd
+	end
+
+end
 
 
 # module Crake
@@ -23,6 +116,7 @@ class CFileList
 	attr_reader :src
 	attr_reader :obj
 	attr_reader :obj_path
+	attr_accessor :obj_dir
 
 
 	def initialize()
@@ -36,20 +130,10 @@ class CFileList
 		@dep_lookup = CDependency.new()
 	end
 
-	def initialize(*args)
-		@inc = Array.new()
-		@src = FileList.new()
-		@obj = FileList.new()
-		@obj_path = nil
-		@obj_to_src_map = Hash.new()
-
-		# this should probably be injected, not created here
-		@dep_lookup = CDependency.new()
-	end
-
 	# Include a path in the include directory.
 	def include( inc_path )
 		@inc << inc_path
+		@inc.flatten!
 	end
 
 	# Add a set of files that should be compiled as described by the

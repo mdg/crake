@@ -1,6 +1,8 @@
+#! /usr/bin/ruby
 
 require "../crake.rb"
 require "test/unit"
+
 
 class CFileSetTestCase < Test::Unit::TestCase
 	def setup
@@ -25,6 +27,12 @@ class CFileSetTestCase < Test::Unit::TestCase
 		assert_equal( [ "include", "testpp/include" ], @cfiles.inc )
 	end
 
+	def test_multi_include
+		@cfiles.include( ['include', 'testpp/include'] )
+
+		assert_equal( ['include', 'testpp/include'], @cfiles.inc )
+	end
+
 	def test_compile
 		@cfiles.compile( "../cpp_project/lib/**/*.cpp" )
 
@@ -34,11 +42,8 @@ class CFileSetTestCase < Test::Unit::TestCase
 		       , @cfiles.obj_to_src( "../cpp_project/lib/object.o" ) )
 	end
 
-	def test_creation
-		f = CFileSet['dog']
-	end
-
 end
+
 
 # Test cases for the CDependency class
 class CDependencyTestCase < Test::Unit::TestCase
