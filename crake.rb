@@ -16,7 +16,7 @@ require 'pathname'
 require 'rake'
 
 
-class CTask
+class CProject
 	attr_accessor :cc
 	attr_accessor :obj_dir
 	attr_accessor :debug
