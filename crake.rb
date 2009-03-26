@@ -16,6 +16,86 @@ require 'pathname'
 require 'rake'
 
 
+class CTask
+	attr_accessor :cc
+	attr_accessor :obj_dir
+	attr_accessor :debug
+	attr_reader :obj
+	attr_reader :debug_flag
+
+
+	def initialize()
+		@cc = 'g++'
+		@inc = Array.new()
+		@src = FileList.new()
+		@obj_dir = ''
+		@debug = false
+		# @filemap = CFileMap.new()
+	end
+
+	def include( inc )
+		@inc << inc
+	end
+
+	# add files to be compiled
+	def source( source )
+		@src << source
+	end
+
+	def compile_dependencies()
+		deps = []
+		@files.each do |f|
+			deps << src_to_obj( f )
+		end
+		return deps
+	end
+
+	def object_dependencies( obj )
+		src = obj_to_src( obj )
+		deps = [ src ]
+		deps << source_dependencies( src )
+		return deps
+	end
+
+	# actually compile a file
+	# maybe call it CC
+	def compile( object )
+		src = obj_to_src( object )
+		exec( "#{@cc} #{debug_flag} #{inc_flags} -o #{object}" )
+	end
+
+	# don't implement yet
+	def link( name )
+		exec( "#{@cc} -o #{name} #{objects}" )
+	end
+
+	# not implemented yet
+	def archive( name )
+		exec( "ar lib#{name}.a" )
+	end
+
+	def get_debug_flag()
+		if not @debug
+			return ''
+		end
+		return '-g'
+	end
+
+	def src_to_obj( source )
+		return source
+	end
+
+	def obj_to_src( object )
+		return object
+	end
+
+	def exec( cmd )
+		sh cmd
+	end
+
+end
+
+
 # module Crake
 
 # Files included in the C project
