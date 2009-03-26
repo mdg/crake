@@ -146,5 +146,17 @@ class CDependency
 	end
 end
 
+
+class CCompiler
+	def initialize()
+		@include = []
+	end
+
+	def include(path)
+		@include << path
+	end
+
+end
+
 # end # Module Crake
 
