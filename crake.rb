@@ -37,6 +37,18 @@ class CProject
 		@inc << inc
 	end
 
+	def debug?()
+		return @debug
+	end
+
+	def debug!()
+		@debug = true
+	end
+
+	def debug=( dbg )
+		@debug = dbg
+	end
+
 	# add files to be compiled
 	def source( source )
 		@src << source
@@ -74,7 +86,7 @@ class CProject
 		exec( "ar lib#{name}.a" )
 	end
 
-	def get_debug_flag()
+	def debug_flag()
 		if not @debug
 			return ''
 		end
