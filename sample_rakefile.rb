@@ -3,13 +3,16 @@ require '../crake'
 SRC = CFileList.new()
 SRC.include( 'include' )
 SRC.compile( 'lib', 'cpp' )
-SRC.obj_dir = 'obj/lib'
 TEST = CFileList.new()
 TEST.include( 'include' )
 TEST.compile( 'test', 'cpp' )
-TEST.obj_dir = 'obj/test'
 
-CC = GppCompiler.new( SRC )
+CC = GppCompiler.new()
+
+PROJECT = CProject.new()
+PROJECT.cc = CC
+PROJECT.files = SRC
+PROJECT.obj_dir = 'obj'
 
 
 directory SRC.obj_dir
@@ -17,26 +20,27 @@ directory TEST.obj_dir
 
 task :default => :lib
 
-rule '.o' => CC.object_dependencies( obj.name ) do |obj|
-	CC.compile( obj.name )
+rule '.o' => PROJECT.object_dependencies( obj.name ) do |obj|
+	PROJECT.compile( obj.name )
 end
 
 task :debug do
-	CC.debug = true
+	PROJECT.debug = true
+	PROJECT.obj_dir = 'dbg'
 end
 
 task :test => [ :compile, :compile_test ] do
-	CC.files = TEST
+	PROJECT.files = TEST
 end
 
-task :compile => CC.compile_dependencies
+task :compile => PROJECT.compile_dependencies
 
 task :build => :compile do
-	CC.link( "program" )
+	PROJECT.link( "program" )
 end
 
 task :lib => :compile do
-	CC.archive( "object", CC.objects )
+	PROJECT.archive( "object", CC.objects )
 end
 
 task "program" => :build

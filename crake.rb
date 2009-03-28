@@ -17,41 +17,15 @@ require 'rake'
 
 
 class CProject
-	attr_accessor :cc
 	attr_accessor :obj_dir
-	attr_accessor :debug
-	attr_reader :obj
-	attr_reader :debug_flag
+	attr_writer :files
+	attr_writer :debug
 
 
-	def initialize()
-		@cc = 'g++'
-		@inc = Array.new()
-		@src = FileList.new()
-		@obj_dir = ''
+	def initialize( cc, files )
+		@cc = cc
+		@files = files
 		@debug = false
-		# @filemap = CFileMap.new()
-	end
-
-	def include( inc )
-		@inc << inc
-	end
-
-	def debug?()
-		return @debug
-	end
-
-	def debug!()
-		@debug = true
-	end
-
-	def debug=( dbg )
-		@debug = dbg
-	end
-
-	# add files to be compiled
-	def source( source )
-		@src << source
 	end
 
 	def compile_dependencies()
@@ -69,28 +43,17 @@ class CProject
 		return deps
 	end
 
-	# actually compile a file
-	# maybe call it CC
 	def compile( object )
-		src = obj_to_src( object )
-		exec( "#{@cc} #{debug_flag} #{inc_flags} -o #{object}" )
+		@cc.compile( obj, obj_to_src )
 	end
 
-	# don't implement yet
 	def link( name )
-		exec( "#{@cc} -o #{name} #{objects}" )
+		@cc.link( name, @files.objects )
 	end
 
 	# not implemented yet
 	def archive( name )
-		exec( "ar lib#{name}.a" )
-	end
-
-	def debug_flag()
-		if not @debug
-			return ''
-		end
-		return '-g'
+		@cc.archive( name, @files.objects )
 	end
 
 	def src_to_obj( source )
@@ -99,10 +62,6 @@ class CProject
 
 	def obj_to_src( object )
 		return object
-	end
-
-	def exec( cmd )
-		sh cmd
 	end
 
 end
@@ -232,12 +191,42 @@ end
 
 
 class CCompiler
-	def initialize()
-		@include = []
+	attr_writer :debug
+
+	def initialize( files )
+		@files = files
+		@debug = false
 	end
 
-	def include(path)
-		@include << path
+	# actually compile a file
+	def compile( object )
+		src = obj_to_src( object )
+		exec( "#{@cc} #{debug_flag} #{inc_flags} -o #{object}" )
+	end
+
+	# don't implement yet
+	def link( name, objects )
+		exec( "#{@cc} -o #{name} #{objects}" )
+	end
+
+	# not implemented
+	def archive( name, objects )
+	end
+
+	def debug?()
+		return @debug
+	end
+
+	def debug!()
+		@debug = true
+	end
+
+
+	def debug_flag()
+		if not @debug
+			return ''
+		end
+		return '-g'
 	end
 
 end
