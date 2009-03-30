@@ -16,20 +16,6 @@ TEST_SRC.compile( 'test' )
 
 CC = GppCompiler.new()
 
-PROJECT = CProject.new()
-PROJECT.cc = CC
-# primary build
-PROJECT.compile( SRC, 'obj', false )
-PROJECT.compile( SRC ).to( 'obj' )
-# debug build
-PROJECT.compile( SRC, 'dbg', true )
-PROJECT.compile( SRC ).to( 'dbg' ).debug!
-# test build
-PROJECT.compile( SRC, 'dbg', true )
-PROJECT.compile( TEST, 'dbg', true )
-PROJECT.compile( SRC ).to( 'dbg' ).debug!
-PROJECT.compile( TEST ).to( 'dbg' ).debug!
-
 # Release and debug compilers
 RELEASE = CompileContext.new( 'obj' )
 DEBUG = CompileContext.new( 'dbg' ).debug!
