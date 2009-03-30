@@ -47,7 +47,7 @@ end
 
 
 # Rule to compile each object
-rule '.o' => PROJECT.object_dependencies( obj.name ) do |obj|
+rule '.o' => CC.object_dependencies( obj.name ) do |obj|
 	CC.compile( obj.name )
 end
 
@@ -56,10 +56,10 @@ task :debug do
 	CC.context = DEBUG
 end
 
-task :compile => PROJECT.compile_dependencies
+task :compile => CC.compile_dependencies
 
 task :build => :compile do
-	CC.link( "program", FILES )
+	CC.link( "program" )
 end
 
 task :build_test => [ :debug, :compile_test ] do
@@ -67,7 +67,7 @@ task :build_test => [ :debug, :compile_test ] do
 end
 
 task :lib => :compile do
-	CC.library( "object", CC.objects )
+	CC.library( "object" )
 end
 
 task :clean do
