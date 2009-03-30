@@ -32,6 +32,20 @@ PROJECT = CProject.new()
 PROJECT.context = [ RELEASE, DEBUG ]
 PROJECT.files = [ APP_SRC, APP_MAIN, TEST_SRC ]
 
+APP = CTarget.new()
+APP.include( 'include' )
+APP.compile( 'src' )
+APP.obj_dir = 'obj/app'
+
+DEBUG_APP = APP.debug
+DEBUG_APP = 'obj/dbg'
+
+TEST = CTarget.new()
+TEST.include( 'include' )
+TEST.compile( 'src' ).filter( 'main.cpp' )
+TEST.compile( 'test' )
+TEST.obj_dir = 'obj/test'
+
 
 # default is to build the program
 task :default => :build
