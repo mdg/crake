@@ -25,7 +25,7 @@ DEBUG = CompileContext.new( 'dbg' ).debug!
 # The compiler class, RELEASE is the default context
 CC = GppCompiler.new()
 CC.context = RELEASE
-CC.files = [ APP_SRC, APP_MAIN ]
+CC.files = APP_FILES
 
 # The project?
 PROJECT = CProject.new()
@@ -37,11 +37,25 @@ PROJECT.files = [ APP_SRC, APP_MAIN, TEST_SRC ]
 task :default => :build
 
 # build the program
-task "program" => :build
+task :build => "program"
+
+task :build_test => "test_program"
 
 # build & run the tests
-task :test => [ :build_test ] do
+task :test => [ :test_context, :build ] do
 	sh "./test_program"
+end
+
+
+# Context modifiers
+# modifies any subsequent tasks to compile w/ debug options
+task :debug do
+	CC.context = DEBUG
+end
+
+# modifies the file to build
+task :test_files do
+	CC.files = TEST_FILES
 end
 
 
@@ -51,18 +65,13 @@ rule '.o' => CC.object_dependencies( obj.name ) do |obj|
 	CC.compile( obj.name )
 end
 
-# modifies any subsequent tasks to compile w/ debug options
-task :debug do
-	CC.context = DEBUG
-end
-
 task :compile => CC.compile_dependencies
 
-task :build => :compile do
+task "program" => :compile do
 	CC.link( "program" )
 end
 
-task :build_test => [ :debug, :compile_test ] do
+task "test_program" => [ :debug, :test_context, :compile_test ] do
 	CC.link( "test_program", 'testpp' )
 end
 
