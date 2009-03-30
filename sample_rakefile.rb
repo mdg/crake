@@ -1,12 +1,18 @@
 require '../crake'
 
-PROGRAM = CFileList.new()
-PROGRAM.include( 'include' )
-PROGRAM.compile( 'lib' )
-TEST = CFileList.new()
-TEST.include( 'include' )
-TEST.include( 'lib' )
-TEST.compile( 'test' )
+# application source
+APP_SRC = CFileList.new()
+APP_SRC.include( 'include' )
+APP_SRC.compile( 'lib' ).exclude!( 'main.cpp' )
+# main is separate for not including in the test app
+APP_MAIN = CFileList.new()
+APP_MAIN.include( 'include' )
+APP_MAIN.compile( 'lib' ).filter!( 'main.cpp' )
+# test source
+TEST_SRC = CFileList.new()
+TEST_SRC.include( 'include' )
+TEST_SRC.include( 'lib' )
+TEST_SRC.compile( 'test' )
 
 CC = GppCompiler.new()
 
