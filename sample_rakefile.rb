@@ -48,27 +48,26 @@ end
 
 # Rule to compile each object
 rule '.o' => PROJECT.object_dependencies( obj.name ) do |obj|
-	PROJECT.compile( obj.name )
+	CC.compile( obj.name )
 end
 
 # modifies any subsequent tasks to compile w/ debug options
 task :debug do
-	PROJECT.debug = true
-	PROJECT.obj_dir = 'dbg'
+	CC.context = DEBUG
 end
 
 task :compile => PROJECT.compile_dependencies
 
 task :build => :compile do
-	PROJECT.link( "program" )
+	CC.link( "program", FILES )
 end
 
 task :build_test => [ :debug, :compile_test ] do
-	PROJECT.link( "test_program", 'testpp' )
+	CC.link( "test_program", 'testpp' )
 end
 
 task :lib => :compile do
-	PROJECT.archive( "object", CC.objects )
+	CC.library( "object", CC.objects )
 end
 
 task :clean do
