@@ -14,14 +14,20 @@ TEST_SRC.include( 'include' )
 TEST_SRC.include( 'lib' )
 TEST_SRC.compile( 'test' )
 
-CC = GppCompiler.new()
 
 # Release and debug compilers
 RELEASE = CompileContext.new( 'obj' )
 DEBUG = CompileContext.new( 'dbg' ).debug!
 
-PROJECT.add_context( RELEASE )
-PROJECT.add_context( DEBUG )
+# The compiler class, RELEASE is the default context
+CC = GppCompiler.new()
+CC.context = RELEASE
+CC.files = [ APP_SRC, APP_MAIN ]
+
+# The project?
+PROJECT = CProject.new()
+PROJECT.context = [ RELEASE, DEBUG ]
+PROJECT.files = [ APP_SRC, APP_MAIN, TEST_SRC ]
 
 
 # default is to build the program
