@@ -42,7 +42,7 @@ task :build => "program"
 task :build_test => "test_program"
 
 # build & run the tests
-task :test => [ :test_context, :build ] do
+task :test => [ :test_files, :build ] do
 	sh "./test_program"
 end
 
