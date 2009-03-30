@@ -31,10 +31,14 @@ task :default => :build
 # build the program
 task :build => "program"
 
-task :build_test => "test_program"
+# build the debug program
+task :debug_build => "dbg_program"
+
+# build the tests
+task :test_build => "test_program"
 
 # build & run the tests
-task :test => [ :test_context, :build ] do
+task :test => [ :build_test ] do
 	sh "./test_program"
 end
 
