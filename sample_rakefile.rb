@@ -14,6 +14,9 @@ TEST_SRC.include( 'include' )
 TEST_SRC.include( 'lib' )
 TEST_SRC.compile( 'test' )
 
+# Group files into targets
+APP_FILES = [ APP_SRC, APP_MAIN ]
+TEST_FILES = [ APP_SRC, TEST_SRC ]
 
 # Release and debug compilers
 RELEASE = CompileContext.new( 'obj' )
