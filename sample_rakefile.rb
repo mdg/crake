@@ -1,10 +1,5 @@
 require '../crake'
 
-# The compiler class, RELEASE is the default context
-CC = GppCompiler.new()
-CC.context = RELEASE
-CC.files = APP_FILES
-
 # The project?
 PROJECT = CProject.new()
 PROJECT.context = [ RELEASE, DEBUG ]
@@ -23,6 +18,10 @@ TEST.include( 'include' )
 TEST.compile( 'src' ).filter( 'main.cpp' )
 TEST.compile( 'test' )
 TEST.obj_dir = 'obj/test'
+
+# The compiler class, RELEASE is the default context
+CC = GppCompiler.new()
+CC.targets = [ APP, DEBUG_APP, TEST ]
 
 
 # default is to build the program
