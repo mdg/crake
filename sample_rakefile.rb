@@ -32,7 +32,7 @@ task :default => :build
 task :build => "program"
 
 # build the debug program
-task :debug_build => "dbg_program"
+task :debug_build => "debug_program"
 
 # build the tests
 task :test_build => "test_program"
@@ -48,14 +48,16 @@ rule '.o' => CC.object_dependencies( obj.name ) do |obj|
 	CC.compile( obj.name )
 end
 
-task :compile => CC.compile_dependencies
-
-task "program" => :compile do
-	CC.link( "program" )
+task "program" => APP.compile_dependencies do
+	CC.link( "program", APP )
 end
 
-task "test_program" => [ :debug, :test_context, :compile_test ] do
-	CC.link( "test_program", 'testpp' )
+task "debug_program" => DEBUG_APP.compile_dependencies do
+	CC.link( "debug_program", DEBUG_APP )
+end
+
+task "test_program" => TEST_APP.compile_dependencies do
+	CC.link( "test_program", TEST_APP )
 end
 
 task :lib => :compile do
