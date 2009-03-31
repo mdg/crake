@@ -18,6 +18,7 @@ TEST.include( 'include' )
 TEST.compile( 'src' ).filter( 'main.cpp' )
 TEST.compile( 'test' )
 TEST.obj_dir = 'obj/test'
+TEST.link( 'testpp' )
 
 # The compiler class, RELEASE is the default context
 CC = GppCompiler.new()
