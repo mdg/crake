@@ -16,17 +16,45 @@ require 'pathname'
 require 'rake'
 
 
-class CProject
+class CTarget
 	attr_accessor :obj_dir
-	attr_writer :files
-	attr_writer :debug
 
 
-	def initialize( cc, files )
-		@cc = cc
-		@files = files
+	def initialize()
 		@debug = false
+		@inc = []
+		@src = FileList.new()
+		@lib = []
 	end
+
+	def clone()
+	end
+
+	# Add a path to be included during compilation
+	def include( path )
+		@inc << path
+	end
+
+	# Compile a directory of source files.
+	def compile( path )
+	end
+
+	# Add a library that should be linked to the app.
+	def link( lib_name )
+		@lib << lib_name
+	end
+
+
+	# Set the debug flag for this target
+	def debug!()
+		@debug = true
+	end
+
+	# Check if this target is set for debug.
+	def debug?()
+		return @debug
+	end
+
 
 	def compile_dependencies()
 		deps = []
@@ -43,18 +71,6 @@ class CProject
 		return deps
 	end
 
-	def compile( object )
-		@cc.compile( obj, obj_to_src )
-	end
-
-	def link( name )
-		@cc.link( name, @files.objects )
-	end
-
-	# not implemented yet
-	def archive( name )
-		@cc.archive( name, @files.objects )
-	end
 
 	def src_to_obj( source )
 		return source
@@ -191,11 +207,9 @@ end
 
 
 class CCompiler
-	attr_writer :debug
 
 	def initialize( files )
 		@files = files
-		@debug = false
 	end
 
 	# actually compile a file
@@ -211,14 +225,6 @@ class CCompiler
 
 	# not implemented
 	def archive( name, objects )
-	end
-
-	def debug?()
-		return @debug
-	end
-
-	def debug!()
-		@debug = true
 	end
 
 
