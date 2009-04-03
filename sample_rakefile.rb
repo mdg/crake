@@ -2,19 +2,22 @@ require '../crake'
 
 
 APP = CTarget.new()
+APP.name = 'program'
 APP.include( 'include' )
 APP.compile( 'src' )
 APP.obj_dir = 'obj/app'
 
 DEBUG_APP = APP.debug
-DEBUG_APP = 'obj/dbg'
+DEBUG_APP.name = 'debug_program'
+DEBUG_APP.obj_dir = 'obj/dbg'
 
 TEST = CTarget.new()
+TEST.name = 'testpp'
+TEST.debug!
 TEST.include( 'include' )
 TEST.compile( 'src' ).filter( 'main.cpp' )
 TEST.compile( 'test' )
 TEST.obj_dir = 'obj/test'
-TEST.link( 'testpp' )
 
 # The compiler class, RELEASE is the default context
 CC = GppCompiler.new()

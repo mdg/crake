@@ -17,10 +17,12 @@ require 'rake'
 
 
 class CTarget
+	attr_accessor :name
 	attr_accessor :obj_dir
 
 
 	def initialize()
+		@name = ''
 		@debug = false
 		@inc = []
 		@src = FileList.new()
