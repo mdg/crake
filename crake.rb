@@ -208,15 +208,43 @@ class CDependency
 end
 
 
-class CCompiler
+class CProject
+	attr_accessor :targets
+	attr_accessor :cc
 
-	def initialize( files )
-		@files = files
+	def initialize()
+		@targets = []
+		@cc = nil
 	end
 
 	# actually compile a file
 	def compile( object )
-		src = obj_to_src( object )
+		t = find_target( object )
+		src = t.obj_to_src( object )
+		@cc.compile( object, src, t.compile_flags )
+	end
+
+	# Link a target
+	def link( target )
+		@cc.link( target.name, target.objects )
+	end
+
+	# Not yet defined
+	def library( target )
+	end
+
+end
+
+
+class CCompiler
+
+	def initialize()
+	end
+
+	# actually compile a file
+	def compile( object )
+		t = find_target( object )
+		src = t.obj_to_src( object )
 		exec( "#{@cc} #{debug_flag} #{inc_flags} -o #{object}" )
 	end
 

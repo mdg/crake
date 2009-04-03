@@ -19,8 +19,8 @@ TEST.compile( 'src' ).filter( 'main.cpp' )
 TEST.compile( 'test' )
 TEST.obj_dir = 'obj/test'
 
-# The compiler class, RELEASE is the default context
-CC = GppCompiler.new()
+CC = CProject.new()
+CC.cc = GppCompiler.new()
 CC.targets = [ APP, DEBUG_APP, TEST ]
 
 
@@ -48,20 +48,20 @@ rule '.o' => CC.object_dependencies( obj.name ) do |obj|
 end
 
 task "program" => APP.compile_dependencies do
-	CC.link( "program", APP )
+	CC.link( APP )
 end
 
 task "debug_program" => DEBUG_APP.compile_dependencies do
-	CC.link( "debug_program", DEBUG_APP )
+	CC.link( DEBUG_APP )
 end
 
 task "test_program" => TEST_APP.compile_dependencies do
-	CC.link( "test_program", TEST_APP )
+	CC.link( TEST_APP )
 end
 
-task :lib => :compile do
-	CC.library( "object" )
-end
+# task :lib => LIB.compile_dependencies do
+#	CC.library( "object" )
+# end
 
 task :clean do
 	sh "rm -rf obj"
