@@ -1,9 +1,5 @@
 require '../crake'
 
-# The project?
-PROJECT = CProject.new()
-PROJECT.context = [ RELEASE, DEBUG ]
-PROJECT.files = [ APP_SRC, APP_MAIN, TEST_SRC ]
 
 APP = CTarget.new()
 APP.include( 'include' )
