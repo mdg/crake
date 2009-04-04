@@ -266,6 +266,7 @@ class CCompiler
 	end
 
 
+	# return the debug flag for this compiler
 	def debug_flag( debug )
 		if not debug
 			return ''
