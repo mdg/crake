@@ -19,14 +19,18 @@ require 'rake'
 class CTarget
 	attr_accessor :name
 	attr_accessor :obj_dir
+	attr_reader :incs
+	attr_reader :libs
+	attr_writer :debug
 
 
 	def initialize()
 		@name = ''
-		@debug = false
-		@inc = []
+		@obj_dir = ''
+		@incs = []
+		@libs = []
 		@src = FileList.new()
-		@lib = []
+		@debug = false
 	end
 
 	def clone()
