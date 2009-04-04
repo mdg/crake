@@ -108,5 +108,10 @@ class CCompilerTestCase < Test::Unit::TestCase
 		assert_equal( ' -Iinclude -Ilib -Itest', flags )
 	end
 
+	def test_lib_flags()
+		flags = @cc.lib_flags( [ 'testpp', 'pthread' ] )
+		assert_equal( ' -ltestpp -lpthread', flags )
+	end
+
 end
 
