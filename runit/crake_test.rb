@@ -79,14 +79,18 @@ end
 
 
 class MockCCompiler < CCompiler
-	@command_history = []
+	attr_reader :command_history
 
 	def exec( cmd )
+		if not @command_history
+			@command_history = []
+		end
 		@command_history << cmd
 	end
 end
 
 class CCompilerTestCase < Test::Unit::TestCase
+
 	def setup()
 		@cc = MockCCompiler.new()
 	end
