@@ -224,8 +224,7 @@ class CProject
 	# actually compile a file
 	def compile( object )
 		t = find_target( object )
-		src = t.obj_to_src( object )
-		@cc.compile( object, src, t.compile_flags )
+		@cc.compile( object, t )
 	end
 
 	# Link a target
@@ -241,20 +240,25 @@ end
 
 
 class CCompiler
+	attr_accessor :cc
 
 	def initialize()
+		@cc = 'g++'
 	end
 
 	# actually compile a file
-	def compile( object )
-		t = find_target( object )
-		src = t.obj_to_src( object )
-		exec( "#{@cc} #{debug_flag} #{inc_flags} -o #{object}" )
+	def compile( object, target )
+		cc_flags = debug_flag( target.debug? )
+		inc_flags = include_flags( target.incs )
+		src = target.obj_to_src( object )
+		exec( "#{@cc} #{cc_flags} #{inc_flags} -o #{object} #{src}" )
 	end
 
 	# don't implement yet
-	def link( name, objects )
-		exec( "#{@cc} -o #{name} #{objects}" )
+	def link( name, target )
+		objs = target.objects.join( ' ' )
+		lib_flags = lib_flags( target.libs )
+		exec( "#{@cc} -o #{name} #{objs}" )
 	end
 
 	# not implemented
@@ -262,11 +266,34 @@ class CCompiler
 	end
 
 
-	def debug_flag()
-		if not @debug
+	def debug_flag( debug? )
+		if not debug?
 			return ''
 		end
 		return '-g'
+	end
+
+	# generate a string for the flags to say which paths
+	# should be included
+	def include_flags( includes )
+		flags = ''
+		includes.each do |i|
+			flags += ' -I' + i
+		end
+	end
+
+	# generate a string for the library flags that should be
+	# linked to the application
+	def lib_flags( libs )
+		flags = ''
+		libs.each do |l|
+			flags += ' -l' + l
+		end
+	end
+
+	# execute a command
+	def exec( cmd )
+		sh( cmd )
 	end
 
 end
