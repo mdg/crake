@@ -270,7 +270,7 @@ class CCompiler
 		if not debug
 			return ''
 		end
-		return '-g'
+		return ' -g'
 	end
 
 	# generate a string for the flags to say which paths

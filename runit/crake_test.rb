@@ -5,6 +5,7 @@ require "test/unit"
 
 
 class CFileSetTestCase < Test::Unit::TestCase
+
 	def setup
 		@cfiles = CFileSet.new()
 	end
@@ -73,6 +74,33 @@ class CDependencyTestCase < Test::Unit::TestCase
 		# assert_equal( [ '../cpp_project/include/abc/object.h' \
 		#		, '../cpp_project/include/abc/obj_test.h' ] \
 		#		, deps )
+	end
+end
+
+
+class MockCCompiler < CCompiler
+	@command_history = []
+
+	def exec( cmd )
+		@command_history << cmd
+	end
+end
+
+class CCompilerTestCase < Test::Unit::TestCase
+	def setup()
+		@cc = MockCCompiler.new()
+	end
+
+	def teardown()
+		@cc = nil
+	end
+
+	def test_debug_flag_true()
+		assert_equal( ' -g', @cc.debug_flag( true ) )
+	end
+
+	def test_debug_flag_false()
+		assert_equal( '', @cc.debug_flag( false ) )
 	end
 end
 
