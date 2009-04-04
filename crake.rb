@@ -280,6 +280,7 @@ class CCompiler
 		includes.each do |i|
 			flags += ' -I' + i
 		end
+		return flags
 	end
 
 	# generate a string for the library flags that should be
@@ -289,6 +290,7 @@ class CCompiler
 		libs.each do |l|
 			flags += ' -l' + l
 		end
+		return flags
 	end
 
 	# execute a command

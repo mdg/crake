@@ -102,5 +102,11 @@ class CCompilerTestCase < Test::Unit::TestCase
 	def test_debug_flag_false()
 		assert_equal( '', @cc.debug_flag( false ) )
 	end
+
+	def test_include_flags()
+		flags = @cc.include_flags( [ 'include', 'lib', 'test' ] )
+		assert_equal( ' -Iinclude -Ilib -Itest', flags )
+	end
+
 end
 
