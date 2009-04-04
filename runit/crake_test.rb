@@ -92,11 +92,13 @@ end
 class CCompilerTestCase < Test::Unit::TestCase
 
 	def setup()
-		@cc = MockCCompiler.new()
+		@cc = CCompiler.new()
+		@mock_cc = MockCCompiler.new()
 	end
 
 	def teardown()
 		@cc = nil
+		@mock_cc = nil
 	end
 
 	# Test that the debug flag is correct when debugging
