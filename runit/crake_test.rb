@@ -99,19 +99,25 @@ class CCompilerTestCase < Test::Unit::TestCase
 		@cc = nil
 	end
 
+	# Test that the debug flag is correct when debugging
 	def test_debug_flag_true()
 		assert_equal( ' -g', @cc.debug_flag( true ) )
 	end
 
+	# Test that the debug flag is correct when not debugging
 	def test_debug_flag_false()
 		assert_equal( '', @cc.debug_flag( false ) )
 	end
 
+	# Test that the include flags are created correctly for an array
+	# of directories.
 	def test_include_flags()
 		flags = @cc.include_flags( [ 'include', 'lib', 'test' ] )
 		assert_equal( ' -Iinclude -Ilib -Itest', flags )
 	end
 
+	# Test that the lib flags are created correctly for an array
+	# of directories.
 	def test_lib_flags()
 		flags = @cc.lib_flags( [ 'testpp', 'pthread' ] )
 		assert_equal( ' -ltestpp -lpthread', flags )
