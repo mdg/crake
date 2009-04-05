@@ -32,6 +32,14 @@ class CTargetTestCase < Test::Unit::TestCase
 		assert( @target.debug? )
 	end
 
+	# test that the compile depdnencies are being generated correctly
+	def test_tp1_compile_dependencies()
+		@target.compile( 'tp1-src' )
+		@target.obj_dir = 'tp1-lib'
+		deps = @target.compile_dependencies()
+		assert_equal( [ 'tp1-lib/file.o' ], deps )
+	end
+
 end
 
 

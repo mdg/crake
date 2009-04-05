@@ -29,7 +29,7 @@ class CTarget
 		@obj_dir = ''
 		@incs = []
 		@libs = []
-		@src = FileList.new()
+		@src = []
 		@debug = false
 	end
 
@@ -64,9 +64,6 @@ class CTarget
 
 	def compile_dependencies()
 		deps = []
-		@files.each do |f|
-			deps << src_to_obj( f )
-		end
 		return deps
 	end
 
