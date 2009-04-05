@@ -4,10 +4,10 @@ require "../crake.rb"
 require "test/unit"
 
 
-class CFileSetTestCase < Test::Unit::TestCase
+class CFileListTestCase < Test::Unit::TestCase
 
 	def setup
-		@cfiles = CFileSet.new()
+		@cfiles = CFileList.new()
 	end
 
 	def teardown
