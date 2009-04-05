@@ -147,3 +147,17 @@ class CCompilerTestCase < Test::Unit::TestCase
 
 end
 
+# Integration tests for entire crake behavior
+class CrakeIntegrationTestCase < Test::Unit::TestCase
+
+	def setup()
+	end
+
+	def teardown()
+	end
+
+	def test_something()
+	end
+
+end
+
