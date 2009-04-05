@@ -4,6 +4,26 @@ require "../crake.rb"
 require "test/unit"
 
 
+class CTargetTestCase < Test::Unit::TestCase
+
+	def setup
+		@target = CTarget.new()
+	end
+
+	def teardown
+		@target = nil
+	end
+
+	def test_target_include()
+		@target.include( 'include' )
+		@target.include( 'src' )
+
+		assert_equal( ['include','src'], @target.incs )
+	end
+
+end
+
+
 class CFileListTestCase < Test::Unit::TestCase
 
 	def setup

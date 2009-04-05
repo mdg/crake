@@ -38,7 +38,7 @@ class CTarget
 
 	# Add a path to be included during compilation
 	def include( path )
-		@inc << path
+		@incs << path
 	end
 
 	# Compile a directory of source files.
