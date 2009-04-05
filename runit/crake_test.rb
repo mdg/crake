@@ -14,11 +14,22 @@ class CTargetTestCase < Test::Unit::TestCase
 		@target = nil
 	end
 
+	def test_constructor()
+		assert_equal( [], @target.incs )
+		assert( ! @target.debug? )
+	end
+
 	def test_target_include()
 		@target.include( 'include' )
 		@target.include( 'src' )
 
 		assert_equal( ['include','src'], @target.incs )
+	end
+
+	# test that debug! properly sets the debug flag
+	def test_set_debug()
+		@target.debug!
+		assert( @target.debug? )
 	end
 
 end
