@@ -36,6 +36,7 @@ class CTargetTestCase < Test::Unit::TestCase
 end
 
 
+# CTarget tests using the test project 1
 class CTargetTP1TestCase < Test::Unit::TestCase
 
 	def setup
@@ -154,6 +155,7 @@ class MockCCompiler < CCompiler
 	end
 end
 
+# Tests for the CCompiler class
 class CCompilerTestCase < Test::Unit::TestCase
 
 	def setup()
