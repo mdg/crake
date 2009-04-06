@@ -4,6 +4,7 @@ require "../crake.rb"
 require "test/unit"
 
 
+# Test the CTarget class features that don't require file system access.
 class CTargetTestCase < Test::Unit::TestCase
 
 	def setup
@@ -32,12 +33,37 @@ class CTargetTestCase < Test::Unit::TestCase
 		assert( @target.debug? )
 	end
 
+end
+
+
+class CTargetTP1TestCase < Test::Unit::TestCase
+
+	def setup
+		@tp1 = CTarget.new()
+		@tp1.compile( 'tp1-src' )
+		@tp1.obj_dir = 'tp1-lib'
+	end
+
+	def teardown
+		@tp1 = nil
+	end
+
 	# test that the compile depdnencies are being generated correctly
 	def test_tp1_compile_dependencies()
-		@target.compile( 'tp1-src' )
-		@target.obj_dir = 'tp1-lib'
-		deps = @target.compile_dependencies()
+		deps = @tp1.compile_dependencies()
 		assert_equal( [ 'tp1-lib/file.o' ], deps )
+	end
+
+	# test the object->source conversion for test project 1
+	def test_tp1_obj_to_src()
+		src = @tp1.obj_to_src( 'tp1-lib/file.o' )
+		assert_equal( 'tp1-src/file.cpp', src )
+	end
+
+	# test the source->object conversion for test project 1
+	def test_tp1_src_to_obj()
+		obj = @tp1.src_to_obj( 'tp1-src/file.cpp' )
+		assert_equal( 'tp1-lib/file.o', obj )
 	end
 
 end
