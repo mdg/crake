@@ -75,12 +75,14 @@ class CTarget
 	end
 
 
-	def src_to_obj( source )
-		return source
+	def src_to_obj( src )
+		obj = src.sub( '.cpp', '.o' )
+		return obj
 	end
 
-	def obj_to_src( object )
-		return object
+	def obj_to_src( obj )
+		src = obj.sub( '.o', '.cpp' )
+		return src
 	end
 
 end
