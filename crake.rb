@@ -31,6 +31,7 @@ class CTarget
 		@libs = []
 		@src = []
 		@debug = false
+		@dependencies = CDependency.new()
 	end
 
 	def clone()
@@ -81,7 +82,7 @@ class CTarget
 	def dependencies( obj )
 		src = obj_to_src( obj )
 		deps = [ src ]
-		deps << source_dependencies( src )
+		deps << @dependencies.headers( src, @incs )
 		return deps
 	end
 
