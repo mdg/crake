@@ -39,6 +39,7 @@ class CTarget
 	# Add a path to be included during compilation
 	def include( path )
 		@incs << path
+		@incs.flatten!
 	end
 
 	# Compile a directory of source files.

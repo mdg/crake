@@ -27,6 +27,13 @@ class CTargetTestCase < Test::Unit::TestCase
 		assert_equal( ['include','src'], @target.incs )
 	end
 
+	# Test that an array of include paths is correctly added to the array
+	def test_multi_include
+		@target.include( ['include', 'testpp/include'] )
+
+		assert_equal( ['include', 'testpp/include'], @target.incs )
+	end
+
 	# test that debug! properly sets the debug flag
 	def test_set_debug()
 		@target.debug!
