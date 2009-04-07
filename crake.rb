@@ -93,63 +93,39 @@ end
 
 # Files included in the C project
 class CFileList
-	attr_reader :inc
-	attr_reader :src
-	attr_reader :obj
-	attr_reader :obj_path
-	attr_accessor :obj_dir
+	attr_reader :src_root
+	attr_reader :inclusion
+	attr_reader :exclusion
 
 
-	def initialize()
-		@inc = Array.new()
-		@src = FileList.new()
-		@obj = FileList.new()
-		@obj_path = nil
-		@obj_to_src_map = Hash.new()
-
-		# this should probably be injected, not created here
-		@dep_lookup = CDependency.new()
+	def initialize( src_root )
+		@src_root = src_root
+		@inclusion = []
+		@exclusion = []
 	end
 
-	# Include a path in the include directory.
-	def include( inc_path )
-		@inc << inc_path
-		@inc.flatten!
-	end
-
-	# Add a set of files that should be compiled as described by the
-	# given glob
-	def compile( glob )
+	# Return each source file included by this file list
+	def each()
+		glob = @src_root
+		if @inclusion.length > 0
+			glob += ( '/'+ @inclusion[0] )
+		else
+			glob += ( '/**/*.cpp' )
+		end
 		files = FileList[ glob ]
-		@src.import( files )
-		for f in files.each
-			# this needs to handle any extension, not just .cpp
-			obj = f.sub( /\.cpp$/, '.o' )
-			@obj << obj
-			@obj_to_src_map[ obj ] = f
+
+		for f in files
+			yield f
 		end
+		return nil
 	end
 
-	# Get the dependencies for an object file.
-	def deps( obj_file )
-		dep_list = []
-		c_file = obj_to_src( obj_file )
-		headers = @dep_lookup.headers( c_file, @inc )
-		dep_list << c_file
-		dep_list.import( headers )
-		return dep_list
+	def files()
+		file_array = []
+		each { |f| file_array << f }
+		return file_array
 	end
 
-	# Return the mapped source file for a given object file
-	def obj_to_src( obj_file )
-		return @obj_to_src_map[ obj_file ]
-	end
-
-	class << self
-		def [](*args)
-			new(*args)
-		end
-	end
 end
 
 
