@@ -44,6 +44,9 @@ class CTarget
 
 	# Compile a directory of source files.
 	def compile( path )
+		files = CFileList.new( path )
+		@src << files
+		return files
 	end
 
 	# Add a library that should be linked to the app.
@@ -63,12 +66,17 @@ class CTarget
 	end
 
 
-	def compile_dependencies()
+	def objects()
 		deps = []
+		@src.each do |s|
+			s.each do |file|
+				deps << src_to_obj( file )
+			end
+		end
 		return deps
 	end
 
-	def object_dependencies( obj )
+	def dependencies( obj )
 		src = obj_to_src( obj )
 		deps = [ src ]
 		deps << source_dependencies( src )
@@ -77,7 +85,7 @@ class CTarget
 
 
 	def src_to_obj( src )
-		obj = src.sub( '.cpp', '.o' )
+		obj = @obj_dir +"/"+ src.sub( '.cpp', '.o' )
 		return obj
 	end
 

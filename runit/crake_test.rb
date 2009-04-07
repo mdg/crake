@@ -56,10 +56,9 @@ class CTargetTP1TestCase < Test::Unit::TestCase
 		@tp1 = nil
 	end
 
-	# test that the compile depdnencies are being generated correctly
-	def test_tp1_compile_dependencies()
-		deps = @tp1.compile_dependencies()
-		assert_equal( [ 'tp1-lib/file.o' ], deps )
+	# test that the objects are being generated correctly from source
+	def test_tp1_objects()
+		assert_equal( [ 'tp1-lib/tp1-src/file.o' ], @tp1.objects )
 	end
 
 	# test the object->source conversion for test project 1
@@ -71,7 +70,7 @@ class CTargetTP1TestCase < Test::Unit::TestCase
 	# test the source->object conversion for test project 1
 	def test_tp1_src_to_obj()
 		obj = @tp1.src_to_obj( 'tp1-src/file.cpp' )
-		assert_equal( 'tp1-lib/file.o', obj )
+		assert_equal( 'tp1-lib/tp1-src/file.o', obj )
 	end
 
 end
