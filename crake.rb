@@ -145,8 +145,6 @@ end
 
 # Scan C files and find header dependencies
 class CDependency
-	# this unnecessary for now attr_reader :header_cache
-
 
 	# This function should probably be modified to use yield
 	# somehow.  Haven't quite got yield figured out
