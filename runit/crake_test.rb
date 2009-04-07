@@ -69,7 +69,7 @@ class CTargetTP1TestCase < Test::Unit::TestCase
 
 	# test the object->source conversion for test project 1
 	def test_tp1_obj_to_src()
-		src = @tp1.obj_to_src( 'tp1-lib/file.o' )
+		src = @tp1.obj_to_src( 'tp1-lib/tp1-src/file.o' )
 		assert_equal( 'tp1-src/file.cpp', src )
 	end
 

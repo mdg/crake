@@ -91,6 +91,7 @@ class CTarget
 
 	def obj_to_src( obj )
 		src = obj.sub( '.o', '.cpp' )
+		src.sub!( /^#{obj_dir}\//, '' )
 		return src
 	end
 
