@@ -66,6 +66,7 @@ class CTarget
 	end
 
 
+	# Get objects that need to be compiled for this target.
 	def objects()
 		deps = []
 		@src.each do |s|
@@ -76,6 +77,7 @@ class CTarget
 		return deps
 	end
 
+	# Get source dependencies for an object files.
 	def dependencies( obj )
 		src = obj_to_src( obj )
 		deps = [ src ]
@@ -84,11 +86,13 @@ class CTarget
 	end
 
 
+	# Map a source file to its corresponding object file.
 	def src_to_obj( src )
 		obj = @obj_dir +"/"+ src.sub( '.cpp', '.o' )
 		return obj
 	end
 
+	# Map an object file to its corresponding source file.
 	def obj_to_src( obj )
 		src = obj.sub( '.o', '.cpp' )
 		src.sub!( /^#{obj_dir}\//, '' )
