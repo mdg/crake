@@ -61,16 +61,16 @@ class CTargetTP1TestCase < Test::Unit::TestCase
 		assert_equal( [ 'tp1-lib/tp1-src/file.o' ], @tp1.objects )
 	end
 
-	# test the object->source conversion for test project 1
-	def test_tp1_obj_to_src()
-		src = @tp1.obj_to_src( 'tp1-lib/file.o' )
-		assert_equal( 'tp1-src/file.cpp', src )
-	end
-
 	# test the source->object conversion for test project 1
 	def test_tp1_src_to_obj()
 		obj = @tp1.src_to_obj( 'tp1-src/file.cpp' )
 		assert_equal( 'tp1-lib/tp1-src/file.o', obj )
+	end
+
+	# test the object->source conversion for test project 1
+	def test_tp1_obj_to_src()
+		src = @tp1.obj_to_src( 'tp1-lib/file.o' )
+		assert_equal( 'tp1-src/file.cpp', src )
 	end
 
 end
