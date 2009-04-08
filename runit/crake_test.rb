@@ -49,7 +49,7 @@ class CTargetTP1TestCase < Test::Unit::TestCase
 	def setup
 		@tp1 = CTarget.new()
 		@tp1.compile( 'tp1-src' )
-		@tp1.obj_dir = 'tp1-lib'
+		@tp1.obj_dir = 'tp1-obj'
 	end
 
 	def teardown
@@ -58,18 +58,18 @@ class CTargetTP1TestCase < Test::Unit::TestCase
 
 	# test that the objects are being generated correctly from source
 	def test_tp1_objects()
-		assert_equal( [ 'tp1-lib/tp1-src/file.o' ], @tp1.objects )
+		assert_equal( [ 'tp1-obj/tp1-src/file.o' ], @tp1.objects )
 	end
 
 	# test the source->object conversion for test project 1
 	def test_tp1_src_to_obj()
 		obj = @tp1.src_to_obj( 'tp1-src/file.cpp' )
-		assert_equal( 'tp1-lib/tp1-src/file.o', obj )
+		assert_equal( 'tp1-obj/tp1-src/file.o', obj )
 	end
 
 	# test the object->source conversion for test project 1
 	def test_tp1_obj_to_src()
-		src = @tp1.obj_to_src( 'tp1-lib/tp1-src/file.o' )
+		src = @tp1.obj_to_src( 'tp1-obj/tp1-src/file.o' )
 		assert_equal( 'tp1-src/file.cpp', src )
 	end
 
