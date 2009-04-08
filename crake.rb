@@ -69,13 +69,13 @@ class CTarget
 
 	# Get objects that need to be compiled for this target.
 	def objects()
-		deps = []
+		objs = []
 		@src.each do |s|
 			s.each do |file|
-				deps << src_to_obj( file )
+				objs << src_to_obj( file )
 			end
 		end
-		return deps
+		return objs
 	end
 
 	# Get source dependencies for an object files.
