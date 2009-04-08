@@ -228,6 +228,15 @@ class CProject
 	def library( target )
 	end
 
+
+	# Find the target for a given object file
+	def find_target( object )
+		for t in @targets
+			return t if object.index( t.obj_dir ) == 0
+		end
+		return nil
+	end
+
 end
 
 

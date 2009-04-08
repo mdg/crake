@@ -143,12 +143,15 @@ end
 
 class MockCCompiler < CCompiler
 	attr_reader :command_history
+	attr_reader :last_command
 
 	def exec( cmd )
 		if not @command_history
 			@command_history = []
+			@last_command = nil
 		end
-		@command_history << cmd
+		@last_command = cmd
+		@command_history << @last_command
 	end
 end
 
@@ -200,7 +203,22 @@ class CrakeIntegrationTestCase < Test::Unit::TestCase
 	def teardown()
 	end
 
-	def test_something()
+	def test_tp1()
+		target = CTarget.new()
+		target.include( 'tp1-include' )
+		target.compile( 'tp1-src' )
+		target.obj_dir = 'obj'
+
+		cc = MockCCompiler.new()
+
+		project = CProject.new()
+		project.targets = [ target ]
+		project.cc = cc
+
+		project.compile( 'obj/tp1-src/file.o' )
+
+		assert_equal( "g++   -Itp1-include -o obj/tp1-src/file.o tp1-src/file.cpp" \
+			     , cc.last_command )
 	end
 
 end
