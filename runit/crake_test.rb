@@ -111,8 +111,8 @@ end
 # Test cases for the CDependency class
 class CDependencyTestCase < Test::Unit::TestCase
 	def setup
-		@inc = [ '../cpp_project/include' ]
 		@dep = CDependency.new()
+		@tp1_inc = ['tp1-include']
 	end
 
 	def teardown
@@ -127,12 +127,12 @@ class CDependencyTestCase < Test::Unit::TestCase
 
 	# Test that the header_path function works for the basic case.
 	def test_header_path
-		inc_path = @dep.header_path( 'abc/object.h', @inc )
-		assert_equal( '../cpp_project/include/abc/object.h', inc_path )
+		inc_path = @dep.header_path( 'file.h', @tp1_inc )
+		assert_equal( 'tp1-include/file.h', inc_path )
 	end
 
 	def test_headers
-		deps = @dep.headers( '../cpp_project/lib/object.cpp', @inc )
+		deps = @dep.headers( '../cpp_project/lib/object.cpp', @tp1_inc )
 		# assert_equal( [ '../cpp_project/include/abc/object.h' \
 		#		, '../cpp_project/include/abc/obj_test.h' ] \
 		#		, deps )
