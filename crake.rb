@@ -83,6 +83,7 @@ class CTarget
 		src = obj_to_src( obj )
 		deps = [ src ]
 		deps << @dependencies.headers( src, @incs )
+		deps.flatten!
 		return deps
 	end
 

@@ -61,6 +61,14 @@ class CTargetTP1TestCase < Test::Unit::TestCase
 		assert_equal( [ 'tp1-obj/tp1-src/file.o' ], @tp1.objects )
 	end
 
+	# Test that the dependencies function finds source and header
+	# dependencies correctly.
+	def test_tp1_dependencies()
+		assert_equal( [ 'tp1-src/file.cpp', 'tp1-include/file.h' \
+			     , 'tp1-include/framework.h' ] \
+			     , @tp1.dependencies( 'tp1-obj/tp1-src/file.o' ) )
+	end
+
 	# test the source->object conversion for test project 1
 	def test_tp1_src_to_obj()
 		obj = @tp1.src_to_obj( 'tp1-src/file.cpp' )
