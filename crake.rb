@@ -82,8 +82,8 @@ class CTarget
 	def dependencies( obj )
 		src = obj_to_src( obj )
 		deps = [ src ]
-		deps << @dependencies.headers( src, @incs )
-		deps.flatten!
+		headers = @dependencies.headers( src, @incs )
+		deps.concat( headers )
 		return deps
 	end
 
