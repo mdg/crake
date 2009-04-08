@@ -16,52 +16,89 @@ require 'pathname'
 require 'rake'
 
 
-class CProject
+class CTarget
+	attr_accessor :name
 	attr_accessor :obj_dir
-	attr_writer :files
+	attr_reader :incs
+	attr_reader :libs
 	attr_writer :debug
 
 
-	def initialize( cc, files )
-		@cc = cc
-		@files = files
+	def initialize()
+		@name = ''
+		@obj_dir = ''
+		@incs = []
+		@libs = []
+		@src = []
 		@debug = false
+		@dependencies = CDependency.new()
 	end
 
-	def compile_dependencies()
-		deps = []
-		@files.each do |f|
-			deps << src_to_obj( f )
+	def clone()
+	end
+
+	# Add a path to be included during compilation
+	def include( path )
+		@incs << path
+		@incs.flatten!
+	end
+
+	# Compile a directory of source files.
+	def compile( path )
+		files = CFileList.new( path )
+		@src << files
+		return files
+	end
+
+	# Add a library that should be linked to the app.
+	def link( lib_name )
+		@lib << lib_name
+	end
+
+
+	# Set the debug flag for this target
+	def debug!()
+		@debug = true
+	end
+
+	# Check if this target is set for debug.
+	def debug?()
+		return @debug
+	end
+
+
+	# Get objects that need to be compiled for this target.
+	def objects()
+		objs = []
+		@src.each do |s|
+			s.each do |file|
+				objs << src_to_obj( file )
+			end
 		end
-		return deps
+		return objs
 	end
 
-	def object_dependencies( obj )
+	# Get source dependencies for an object files.
+	def dependencies( obj )
 		src = obj_to_src( obj )
 		deps = [ src ]
-		deps << source_dependencies( src )
+		headers = @dependencies.headers( src, @incs )
+		deps.concat( headers )
 		return deps
 	end
 
-	def compile( object )
-		@cc.compile( obj, obj_to_src )
+
+	# Map a source file to its corresponding object file.
+	def src_to_obj( src )
+		obj = @obj_dir +"/"+ src.sub( '.cpp', '.o' )
+		return obj
 	end
 
-	def link( name )
-		@cc.link( name, @files.objects )
-	end
-
-	# not implemented yet
-	def archive( name )
-		@cc.archive( name, @files.objects )
-	end
-
-	def src_to_obj( source )
-		return source
-	end
-
-	def obj_to_src( object )
-		return object
+	# Map an object file to its corresponding source file.
+	def obj_to_src( obj )
+		src = obj.sub( '.o', '.cpp' )
+		src.sub!( /^#{obj_dir}\//, '' )
+		return src
 	end
 
 end
@@ -71,97 +108,75 @@ end
 
 # Files included in the C project
 class CFileList
-	attr_reader :inc
-	attr_reader :src
-	attr_reader :obj
-	attr_reader :obj_path
-	attr_accessor :obj_dir
+	attr_reader :src_root
+	attr_reader :inclusion
+	attr_reader :exclusion
 
 
-	def initialize()
-		@inc = Array.new()
-		@src = FileList.new()
-		@obj = FileList.new()
-		@obj_path = nil
-		@obj_to_src_map = Hash.new()
-
-		# this should probably be injected, not created here
-		@dep_lookup = CDependency.new()
+	def initialize( src_root )
+		@src_root = src_root
+		@inclusion = []
+		@exclusion = []
 	end
 
-	# Include a path in the include directory.
-	def include( inc_path )
-		@inc << inc_path
-		@inc.flatten!
-	end
-
-	# Add a set of files that should be compiled as described by the
-	# given glob
-	def compile( glob )
+	# Return each source file included by this file list
+	def each()
+		glob = @src_root
+		if @inclusion.length > 0
+			glob += ( '/'+ @inclusion[0] )
+		else
+			glob += ( '/**/*.cpp' )
+		end
 		files = FileList[ glob ]
-		@src.import( files )
-		for f in files.each
-			# this needs to handle any extension, not just .cpp
-			obj = f.sub( /\.cpp$/, '.o' )
-			@obj << obj
-			@obj_to_src_map[ obj ] = f
+
+		for f in files
+			yield f
 		end
+		return nil
 	end
 
-	# Get the dependencies for an object file.
-	def deps( obj_file )
-		dep_list = []
-		c_file = obj_to_src( obj_file )
-		headers = @dep_lookup.headers( c_file, @inc )
-		dep_list << c_file
-		dep_list.import( headers )
-		return dep_list
+	def files()
+		file_array = []
+		each { |f| file_array << f }
+		return file_array
 	end
 
-	# Return the mapped source file for a given object file
-	def obj_to_src( obj_file )
-		return @obj_to_src_map[ obj_file ]
-	end
-
-	class << self
-		def [](*args)
-			new(*args)
-		end
-	end
 end
 
 
 # Scan C files and find header dependencies
 class CDependency
-	# this unnecessary for now attr_reader :header_cache
+
+	# Create the dependency object
+	def initialize()
+	end
 
 
-	# This function should probably be modified to use yield
-	# somehow.  Haven't quite got yield figured out
-	# enough for that yet though.
-	def headers( src_filename, inc_dirs )
+	def headers( filename, inc_dirs )
 		header_list = []
 
-		p = Pathname.new( src_filename )
-		path_prefix = p.dirname.to_s + "/"
-		# print path_prefix, "\n"
-		src_file = File.new( src_filename, "r" )
-		src_file.each do |line|
-			# print line
-			inc = line.match( /#include +"([\w]+\.h)"/ )
-			if ( ! inc.nil? )
-				# inc_path = path_prefix + inc[1]
-				inc_path = header_path( inc[1], inc_dirs )
-				if not inc_path.nil?
-					# print inc_path, "\n"
-					header_list << inc_path
-					included_headers = headers( inc_path \
-								   , inc_dirs )
-					header_list.import( included_headers )
-				end
+		each_include( filename ) do |inc|
+			inc_path = header_path( inc, inc_dirs )
+
+			if ( ! inc_path.nil? )
+				header_list << inc_path
+
+				nested_headers = headers( inc_path, inc_dirs )
+				header_list.concat( nested_headers )
 			end
 		end
-		return header_list.uniq
+
+		return header_list
+	end
+
+	def each_include( filename )
+		# print "each_include( ", filename, " )\n"
+
+		f = File.new( filename, "r" )
+		for line in f.each
+			inc = find_include( line )
+			yield inc if ! inc.nil?
+		end
 	end
 
 	# Check if the given line of text includes an include statement
@@ -169,18 +184,17 @@ class CDependency
 	# return nil if the line does not have an include statement
 	# throw an error if it is an include line but it is not understood
 	def find_include( line )
-		inc = line.match( /#include +"([\w]+\.h)"/ )
-		# return true if the include is found
-		return ( not inc.nil? )
+		inc = /#include +"([\w]+\.h)"/.match( line )
+		# return nil if nothing
+		return nil if inc.nil?
+		return inc.to_a[1]
 	end
 
 	# Check for an included file in the given include directories
 	def header_path( inc, inc_dirs )
-		# print "inc_dirs = '", inc_dirs, "'\n"
 		inc_dirs.each do |inc_dir|
 			path = Pathname.new( inc_dir )
 			path = path + inc
-			# print "path = '", path, "'\n"
 			if path.exist?
 				return path.to_s
 			end
@@ -190,43 +204,100 @@ class CDependency
 end
 
 
-class CCompiler
-	attr_writer :debug
+class CProject
+	attr_accessor :targets
+	attr_accessor :cc
 
-	def initialize( files )
-		@files = files
-		@debug = false
+	def initialize()
+		@targets = []
+		@cc = nil
 	end
 
 	# actually compile a file
 	def compile( object )
-		src = obj_to_src( object )
-		exec( "#{@cc} #{debug_flag} #{inc_flags} -o #{object}" )
+		t = find_target( object )
+		@cc.compile( object, t )
+	end
+
+	# Link a target
+	def link( target )
+		@cc.link( target.name, target.objects )
+	end
+
+	# Not yet defined
+	def library( target )
+	end
+
+
+	# Find the target for a given object file
+	def find_target( object )
+		for t in @targets
+			return t if object.index( t.obj_dir ) == 0
+		end
+		return nil
+	end
+
+end
+
+
+class CCompiler
+	attr_accessor :cc
+
+	def initialize()
+		@cc = 'g++'
+	end
+
+	# actually compile a file
+	def compile( object, target )
+		cc_flags = debug_flag( target.debug? )
+		inc_flags = include_flags( target.incs )
+		src = target.obj_to_src( object )
+		exec( "#{@cc} #{cc_flags} #{inc_flags} -o #{object} #{src}" )
 	end
 
 	# don't implement yet
-	def link( name, objects )
-		exec( "#{@cc} -o #{name} #{objects}" )
+	def link( name, target )
+		objs = target.objects.join( ' ' )
+		lib_flags = lib_flags( target.libs )
+		exec( "#{@cc} -o #{name} #{objs}" )
 	end
 
 	# not implemented
 	def archive( name, objects )
 	end
 
-	def debug?()
-		return @debug
-	end
 
-	def debug!()
-		@debug = true
-	end
-
-
-	def debug_flag()
-		if not @debug
+	# return the debug flag for this compiler
+	def debug_flag( debug )
+		if not debug
 			return ''
 		end
-		return '-g'
+		return ' -g'
+	end
+
+	# generate a string for the flags to say which paths
+	# should be included
+	def include_flags( includes )
+		flags = ''
+		includes.each do |i|
+			flags += ' -I' + i
+		end
+		return flags
+	end
+
+	# generate a string for the library flags that should be
+	# linked to the application
+	def lib_flags( libs )
+		flags = ''
+		libs.each do |l|
+			flags += ' -l' + l
+		end
+		return flags
+	end
+
+	# execute a command
+	def exec( cmd )
+		sh( cmd )
 	end
 
 end

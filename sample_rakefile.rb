@@ -1,36 +1,27 @@
 require '../crake'
 
-# application source
-APP_SRC = CFileList.new()
-APP_SRC.include( 'include' )
-APP_SRC.compile( 'lib' ).exclude!( 'main.cpp' )
-# main is separate for not including in the test app
-APP_MAIN = CFileList.new()
-APP_MAIN.include( 'include' )
-APP_MAIN.compile( 'lib' ).filter!( 'main.cpp' )
-# test source
-TEST_SRC = CFileList.new()
-TEST_SRC.include( 'include' )
-TEST_SRC.include( 'lib' )
-TEST_SRC.compile( 'test' )
 
-# Group files into targets
-APP_FILES = [ APP_SRC, APP_MAIN ]
-TEST_FILES = [ APP_SRC, TEST_SRC ]
+APP = CTarget.new()
+APP.name = 'program'
+APP.include( 'include' )
+APP.compile( 'src' )
+APP.obj_dir = 'obj/app'
 
-# Release and debug compilers
-RELEASE = CompileContext.new( 'obj' )
-DEBUG = CompileContext.new( 'dbg' ).debug!
+DEBUG_APP = APP.debug
+DEBUG_APP.name = 'debug_program'
+DEBUG_APP.obj_dir = 'obj/dbg'
 
-# The compiler class, RELEASE is the default context
-CC = GppCompiler.new()
-CC.context = RELEASE
-CC.files = APP_FILES
+TEST = CTarget.new()
+TEST.name = 'testpp'
+TEST.debug!
+TEST.include( 'include' )
+TEST.compile( 'src' ).filter( 'main.cpp' )
+TEST.compile( 'test' )
+TEST.obj_dir = 'obj/test'
 
-# The project?
-PROJECT = CProject.new()
-PROJECT.context = [ RELEASE, DEBUG ]
-PROJECT.files = [ APP_SRC, APP_MAIN, TEST_SRC ]
+CC = CProject.new()
+CC.cc = GppCompiler.new()
+CC.targets = [ APP, DEBUG_APP, TEST ]
 
 
 # default is to build the program
@@ -39,25 +30,16 @@ task :default => :build
 # build the program
 task :build => "program"
 
-task :build_test => "test_program"
+# build the debug program
+task :debug_build => "debug_program"
+
+# build the tests
+task :test_build => "test_program"
 
 # build & run the tests
-task :test => [ :test_files, :build ] do
+task :test => [ :build_test ] do
 	sh "./test_program"
 end
-
-
-# Context modifiers
-# modifies any subsequent tasks to compile w/ debug options
-task :debug do
-	CC.context = DEBUG
-end
-
-# modifies the file to build
-task :test_files do
-	CC.files = TEST_FILES
-end
-
 
 
 # Rule to compile each object
@@ -65,19 +47,21 @@ rule '.o' => CC.object_dependencies( obj.name ) do |obj|
 	CC.compile( obj.name )
 end
 
-task :compile => CC.compile_dependencies
-
-task "program" => :compile do
-	CC.link( "program" )
+task "program" => APP.compile_dependencies do
+	CC.link( APP )
 end
 
-task "test_program" => [ :debug, :test_context, :compile_test ] do
-	CC.link( "test_program", 'testpp' )
+task "debug_program" => DEBUG_APP.compile_dependencies do
+	CC.link( DEBUG_APP )
 end
 
-task :lib => :compile do
-	CC.library( "object" )
+task "test_program" => TEST_APP.compile_dependencies do
+	CC.link( TEST_APP )
 end
+
+# task :lib => LIB.compile_dependencies do
+#	CC.library( "object" )
+# end
 
 task :clean do
 	sh "rm -rf obj"
