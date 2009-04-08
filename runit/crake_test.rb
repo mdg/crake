@@ -48,6 +48,7 @@ class CTargetTP1TestCase < Test::Unit::TestCase
 
 	def setup
 		@tp1 = CTarget.new()
+		@tp1.include( 'tp1-include' )
 		@tp1.compile( 'tp1-src' )
 		@tp1.obj_dir = 'tp1-obj'
 	end
@@ -132,10 +133,10 @@ class CDependencyTestCase < Test::Unit::TestCase
 	end
 
 	def test_headers
-		deps = @dep.headers( '../cpp_project/lib/object.cpp', @tp1_inc )
-		# assert_equal( [ '../cpp_project/include/abc/object.h' \
-		#		, '../cpp_project/include/abc/obj_test.h' ] \
-		#		, deps )
+		deps = @dep.headers( 'tp1-src/file.cpp', @tp1_inc )
+		assert_equal( [ 'tp1-include/file.h' \
+				, 'tp1-include/framework.h' ] \
+				, deps )
 	end
 end
 

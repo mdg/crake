@@ -147,32 +147,36 @@ end
 # Scan C files and find header dependencies
 class CDependency
 
-	# This function should probably be modified to use yield
-	# somehow.  Haven't quite got yield figured out
-	# enough for that yet though.
-	def headers( src_filename, inc_dirs )
+	# Create the dependency object
+	def initialize()
+	end
+
+
+	def headers( filename, inc_dirs )
 		header_list = []
 
-		p = Pathname.new( src_filename )
-		path_prefix = p.dirname.to_s + "/"
-		# print path_prefix, "\n"
-		src_file = File.new( src_filename, "r" )
-		src_file.each do |line|
-			# print line
-			inc = line.match( /#include +"([\w]+\.h)"/ )
-			if ( ! inc.nil? )
-				# inc_path = path_prefix + inc[1]
-				inc_path = header_path( inc[1], inc_dirs )
-				if not inc_path.nil?
-					# print inc_path, "\n"
-					header_list << inc_path
-					included_headers = headers( inc_path \
-								   , inc_dirs )
-					header_list.import( included_headers )
-				end
+		each_include( filename ) do |inc|
+			inc_path = header_path( inc, inc_dirs )
+
+			if ( ! inc_path.nil? )
+				header_list << inc_path
+
+				nested_headers = headers( inc_path, inc_dirs )
+				header_list.concat( nested_headers )
 			end
 		end
-		return header_list.uniq
+
+		return header_list
+	end
+
+	def each_include( filename )
+		# print "each_include( ", filename, " )\n"
+
+		f = File.new( filename, "r" )
+		for line in f.each
+			inc = find_include( line )
+			yield inc if ! inc.nil?
+		end
 	end
 
 	# Check if the given line of text includes an include statement
@@ -180,18 +184,17 @@ class CDependency
 	# return nil if the line does not have an include statement
 	# throw an error if it is an include line but it is not understood
 	def find_include( line )
-		inc = line.match( /#include +"([\w]+\.h)"/ )
-		# return true if the include is found
-		return ( not inc.nil? )
+		inc = /#include +"([\w]+\.h)"/.match( line )
+		# return nil if nothing
+		return nil if inc.nil?
+		return inc.to_a[1]
 	end
 
 	# Check for an included file in the given include directories
 	def header_path( inc, inc_dirs )
-		# print "inc_dirs = '", inc_dirs, "'\n"
 		inc_dirs.each do |inc_dir|
 			path = Pathname.new( inc_dir )
 			path = path + inc
-			# print "path = '", path, "'\n"
 			if path.exist?
 				return path.to_s
 			end
