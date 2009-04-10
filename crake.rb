@@ -52,7 +52,7 @@ class CTarget
 
 	# Add a library that should be linked to the app.
 	def link( lib_name )
-		@lib << lib_name
+		@libs << lib_name
 	end
 
 
