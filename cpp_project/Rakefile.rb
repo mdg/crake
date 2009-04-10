@@ -1,33 +1,54 @@
 require '../crake'
 
-INC = CFileList[ 'include/**/*.h' ]
-SRC = FileList[ 'lib/**/*.cpp' ]
-OBJ = SRC.sub( /\.cpp$/, '.o' ).sub( /^lib\//, 'obj/lib/' )
-TEST = FileList[ 'test/**/*.cpp' ]
-TEST_OBJ = TEST.sub( /\.cpp$/, '.o' ).sub( /^test\//, 'obj/test/' )
+APP = CTarget.new()
+APP.name = 'app'
+APP.include( 'include' )
+APP.compile( 'lib' )
+APP.obj_dir = 'obj/app'
+TEST = CTarget.new()
+TEST.name = 'test_app'
+TEST.include( 'include' )
+TEST.compile( 'lib' ).exclusion << 'main.cpp'
+TEST.compile( 'test' )
+TEST.link( 'testpp' )
+TEST.obj_dir = 'obj/test'
+TEST.debug!
+
+PROJECT = CProject.new()
+PROJECT.cc = CCompiler.new()
+PROJECT.targets = [ APP, TEST ]
 
 
-directory 'obj/lib'
+directory 'obj/app'
+directory 'obj/app/lib'
 directory 'obj/test'
+directory 'obj/test/lib'
+directory 'obj/test/test'
 
-task :default => :lib
+task :default => :app
+
+task :app => :compile_app do
+	PROJECT.link( APP )
+end
 
 task :lib => :compile do
-	sh %{ar r object.a #{OBJ}}
+	# sh %{ar r object.a #{OBJ}}
 end
 
-task :test => [ :compile, :compile_test ] do
-	sh %{g++ -o run-test #{OBJ} #{TEST_OBJ}}
-	# sh %{g++ -o run-test #{OBJ} -Iinclude test/object_test.cpp}
+task :test => :test_app do
+	sh "test_app"
 end
 
-task :compile => ["obj/lib"] + OBJ
+task :test_app => :compile_test do
+	PROJECT.link( TEST )
+end
 
-task :compile_test => ['obj/test'] + TEST_OBJ
+task :compile_app => ["obj/app", 'obj/app/lib'] + APP.objects
 
-rule '.o' => TEST + SRC do |t|
-	print %{#{t.name} #{t.source}\n}
-	sh %{g++ -c -g -Iinclude -o #{t.name} #{t.source}}
+task :compile_test => ['obj/test'] + TEST.objects
+
+rule '.o' => [ proc { |o| PROJECT.dependencies( o ) } ] do |t|
+	PROJECT.compile( t.name )
 end
 
 task :clean => [] do
