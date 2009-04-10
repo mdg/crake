@@ -236,7 +236,7 @@ class CProject
 
 	# Link a target
 	def link( target )
-		@cc.link( target.name, target.objects )
+		@cc.link( target )
 	end
 
 	# Not yet defined
@@ -271,10 +271,10 @@ class CCompiler
 	end
 
 	# don't implement yet
-	def link( name, target )
+	def link( target )
 		objs = target.objects.join( ' ' )
 		lib_flags = lib_flags( target.libs )
-		exec( "#{@cc} -o #{name} #{objs}" )
+		exec( "#{@cc} -o #{target.name} #{objs}" )
 	end
 
 	# not implemented
