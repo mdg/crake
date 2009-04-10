@@ -213,6 +213,12 @@ class CProject
 		@cc = nil
 	end
 
+	# Get dependencies for an object
+	def dependencies( object )
+		t = find_target( object )
+		return t.dependencies( object )
+	end
+
 	# actually compile a file
 	def compile( object )
 		t = find_target( object )
