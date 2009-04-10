@@ -274,7 +274,7 @@ class CCompiler
 	def link( target )
 		objs = target.objects.join( ' ' )
 		lib_flags = lib_flags( target.libs )
-		exec( "#{@cc} -o #{target.name} #{objs}" )
+		exec( "#{@cc} -o #{target.name} #{lib_flags} #{objs}" )
 	end
 
 	# not implemented
