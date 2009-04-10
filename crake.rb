@@ -108,9 +108,9 @@ end
 
 # Files included in the C project
 class CFileList
-	attr_reader :src_root
-	attr_reader :inclusion
-	attr_reader :exclusion
+	attr_accessor :src_root
+	attr_accessor :inclusion
+	attr_accessor :exclusion
 
 
 	def initialize( src_root )
@@ -130,7 +130,7 @@ class CFileList
 		files = FileList[ glob ]
 
 		for f in files
-			yield f
+			yield f if not excluded?( f )
 		end
 		return nil
 	end
@@ -139,6 +139,15 @@ class CFileList
 		file_array = []
 		each { |f| file_array << f }
 		return file_array
+	end
+
+	def excluded?( filename )
+		if not @exclusion
+			return false
+		end
+
+		exclusion_match = filename.match( /#{@exclusion[0]}/ )
+		return ! exclusion_match.nil?
 	end
 
 end
