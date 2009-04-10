@@ -267,7 +267,7 @@ class CCompiler
 		cc_flags = debug_flag( target.debug? )
 		inc_flags = include_flags( target.incs )
 		src = target.obj_to_src( object )
-		exec( "#{@cc} #{cc_flags} #{inc_flags} -o #{object} #{src}" )
+		exec( "#{@cc} -c #{cc_flags} #{inc_flags} -o #{object} #{src}" )
 	end
 
 	# don't implement yet
