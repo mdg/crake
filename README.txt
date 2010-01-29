@@ -5,10 +5,7 @@ Supports:
 * multiple targets
 
 Crake Components:
-* CCompiler
-* CFileList
-* CompileContext
-
-Future Components:
 * CTarget
+* CProject
+* CCompiler (and derivations)
 
